@@ -1,0 +1,28 @@
+SELECT name, gender, sum(number)
+FROM `bigquery-public-data.usa_names.usa_1910_2013`
+GROUP BY name, gender
+order by sum(number) desc;
+
+SELECT date, state, tests_total ,cases_positive_total, 
+sum(tests_total) over(partition by state) as TotalSuma
+FROM `bigquery-public-data.covid19_covidtracking.summary`; 
+
+WITH
+    Total AS (
+    SELECT 
+      channelGrouping,
+      SUM(totals.pageviews) AS TotalPaginas,
+    FROM `bigquery-public-data.google_analytics_sample.ga_sessions_20170801`
+    WHERE DATE = '20170801'
+    group by channelGrouping
+  )
+SELECT
+  SUM(TotalPaginas) AS total_page_views,
+  SUM(TotalPaginas) / COUNT(*) AS PROMEDIO,
+FROM Total;
+
+
+SELECT Region, Country, sum(total_revenue) as Total_Revenue, dense_rank() over(partition by region order by country desc ) AS Rank
+FROM `bd2-iris.Sales1.SalesRecord`
+GROUP BY Region, Country
+order by region asc;
